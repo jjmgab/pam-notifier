@@ -3,8 +3,10 @@ package com.jjmgab.notifier;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
 
+import android.app.Notification;
 import android.net.Uri;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import com.google.android.material.tabs.TabLayout;
 
@@ -35,7 +37,9 @@ public class MainActivity
 
     @Override
     public void onListFragmentInteraction(NotificationItem item) {
-
+        NotificationCreator.createNotificationChannel(this);
+        Notification n = NotificationCreator.createNotification(this, item.title, item.details);
+        NotificationCreator.scheduleNotification(this, n, 5000);
     }
 
     @Override
