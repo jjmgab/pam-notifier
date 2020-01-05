@@ -1,6 +1,14 @@
 package com.jjmgab.notifier;
 
+import android.content.Context;
+
+import androidx.room.Room;
+
+import com.jjmgab.notifier.database.AppDatabase;
+import com.jjmgab.notifier.database.Notification;
+
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -8,31 +16,54 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Class responsible for providing {@link NotificationItem} list.
+ * Class responsible for providing {@link Notification} list.
  */
 public class NotificationItemSource {
 
-    public static final List<NotificationItem> ITEMS = new ArrayList<>();
+    private static AppDatabase db;
+    private static NotificationItemFragment mFragment;
 
-    public static final Map<String, NotificationItem> ITEM_MAP = new HashMap<>();
+    public static final List<Notification> ITEMS = new ArrayList<>();
+    public static final Map<String, Notification> ITEM_MAP = new HashMap<>();
 
-    // generation
     private static final int COUNT = 25;
 
-    static {
-        // Add some sample items.
-        for (int i = 1; i <= COUNT; i++) {
-            addItem(createNotificationItem(i));
+    public static void init(Context appContext, NotificationItemFragment fragment, boolean initWithCleanup) {
+        db = Room.databaseBuilder(appContext, AppDatabase.class, "database-name")
+                .allowMainThreadQueries()
+                .build();
+
+        if (initWithCleanup) {
+            db.clearAllTables();
+        }
+
+        for (Notification n : db.notificationDao().getAll()) {
+            ITEMS.add(n);
+            ITEM_MAP.put(String.valueOf(n.id), n);
+        }
+
+        mFragment = fragment;
+    }
+
+    public static void addItem(Notification item) {
+        db.notificationDao().insertAll(item);
+        ITEMS.add(item);
+        ITEM_MAP.put(String.valueOf(item.id), item);
+
+        if (mFragment.getAdapter() != null) {
+            mFragment.getAdapter().notifyDataSetChanged();
         }
     }
 
-    private static void addItem(NotificationItem item) {
-        ITEMS.add(item);
-        ITEM_MAP.put(item.id, item);
+    // data seeding
+    public static void seed() {
+        for (int i = 1; i <= COUNT; i++) {
+            addItem(createSampleNotificationItem(i));
+        }
     }
 
-    private static NotificationItem createNotificationItem(int position) {
-        return new NotificationItem(String.valueOf(position), "Item " + position, makeDetails(position), makeDate(), makeTime());
+    public static Notification createSampleNotificationItem(int position) {
+        return new Notification("Item " + position, makeDetails(position), LocalDateTime.now());
     }
 
     private static String makeDetails(int position) {
@@ -43,13 +74,4 @@ public class NotificationItemSource {
         }
         return builder.toString();
     }
-
-    private static LocalDate makeDate() {
-        return LocalDate.of(2019, 1, 1);
-    }
-
-    private static LocalTime makeTime() {
-        return LocalTime.of(12, 30);
-    }
-    // end generation
 }

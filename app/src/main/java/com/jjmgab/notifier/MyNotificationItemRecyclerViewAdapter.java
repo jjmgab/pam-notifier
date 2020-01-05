@@ -8,19 +8,20 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.jjmgab.notifier.NotificationItemFragment.OnListFragmentInteractionListener;
+import com.jjmgab.notifier.database.Notification;
 
 import java.util.List;
 
 /**
- * {@link RecyclerView.Adapter} that can display a {@link NotificationItem} and makes a call to the
+ * {@link RecyclerView.Adapter} that can display a {@link Notification} and makes a call to the
  * specified {@link OnListFragmentInteractionListener}.
  */
 public class MyNotificationItemRecyclerViewAdapter extends RecyclerView.Adapter<MyNotificationItemRecyclerViewAdapter.ViewHolder> {
 
-    private final List<NotificationItem> mValues;
+    private final List<Notification> mValues;
     private final OnListFragmentInteractionListener mListener;
 
-    public MyNotificationItemRecyclerViewAdapter(List<NotificationItem> items, OnListFragmentInteractionListener listener) {
+    public MyNotificationItemRecyclerViewAdapter(List<Notification> items, OnListFragmentInteractionListener listener) {
         mValues = items;
         mListener = listener;
     }
@@ -40,10 +41,10 @@ public class MyNotificationItemRecyclerViewAdapter extends RecyclerView.Adapter<
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
-        holder.mIdView.setText(mValues.get(position).id);
+        holder.mIdView.setText(String.valueOf(mValues.get(position).id));
         holder.mTitleView.setText(mValues.get(position).title);
-        holder.mDateView.setText(mValues.get(position).date.toString());
-        holder.mTimeView.setText(mValues.get(position).time.toString());
+        holder.mDateView.setText(mValues.get(position).date.toLocalDate().toString());
+        holder.mTimeView.setText(mValues.get(position).date.toLocalTime().toString());
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -63,7 +64,7 @@ public class MyNotificationItemRecyclerViewAdapter extends RecyclerView.Adapter<
     }
 
     /**
-     * Holds the view for {@link NotificationItem}.
+     * Holds the view for {@link Notification}.
      */
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
@@ -71,7 +72,7 @@ public class MyNotificationItemRecyclerViewAdapter extends RecyclerView.Adapter<
         public final TextView mTitleView;
         public final TextView mDateView;
         public final TextView mTimeView;
-        public NotificationItem mItem;
+        public Notification mItem;
 
         public ViewHolder(View view) {
             super(view);

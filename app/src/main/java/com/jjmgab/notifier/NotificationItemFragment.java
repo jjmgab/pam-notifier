@@ -12,6 +12,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.jjmgab.notifier.database.Notification;
+
 /**
  * A fragment representing a list of Items.
  * <p/>
@@ -24,7 +26,9 @@ public class NotificationItemFragment extends Fragment {
     private static final String ARG_COLUMN_COUNT = "column-count";
     // TODO: Customize parameters
     private int mColumnCount = 1;
+
     private OnListFragmentInteractionListener mListener;
+    private MyNotificationItemRecyclerViewAdapter mAdapter;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -66,7 +70,8 @@ public class NotificationItemFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new MyNotificationItemRecyclerViewAdapter(NotificationItemSource.ITEMS, mListener));
+            mAdapter = new MyNotificationItemRecyclerViewAdapter(NotificationItemSource.ITEMS, mListener);
+            recyclerView.setAdapter(mAdapter);
         }
         return view;
     }
@@ -89,6 +94,8 @@ public class NotificationItemFragment extends Fragment {
         mListener = null;
     }
 
+    public MyNotificationItemRecyclerViewAdapter getAdapter() { return mAdapter; }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -101,6 +108,6 @@ public class NotificationItemFragment extends Fragment {
      */
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onListFragmentInteraction(NotificationItem item);
+        void onListFragmentInteraction(Notification item);
     }
 }
