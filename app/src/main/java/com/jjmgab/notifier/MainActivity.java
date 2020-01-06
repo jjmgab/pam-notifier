@@ -27,6 +27,8 @@ public class MainActivity
 
     private NotificationItemFragment mNotificationItemFragment;
 
+    private final int REQUEST_CODE_ADD_NOTIFICATION = 10001;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,25 +50,52 @@ public class MainActivity
         mFloatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // open new notification activity here
                 Intent intent = new Intent(getApplicationContext(), AddNotification.class);
-                startActivity(intent);
+                startActivityForResult(intent, REQUEST_CODE_ADD_NOTIFICATION);
             }
         });
 
         // initialize database connection
         NotificationItemSource.init(this, mNotificationItemFragment, false);
-
-        // for test purposes
-        NotificationItemSource.addItem(new com.jjmgab.notifier.database.Notification(
-                "Manually added title",
-                "Manual description",
-                LocalDateTime.now()
-        ));
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_ADD_NOTIFICATION) {
+            boolean hasTitle = data.hasExtra("title") &&
+                    data.hasExtra("description");
+            boolean hasDate = data.hasExtra("year") &&
+                    data.hasExtra("month") &&
+                    data.hasExtra("day");
+            boolean hasTime = data.hasExtra("hour") &&
+                    data.hasExtra("minute");
+
+            if (hasTitle && hasTime && hasDate) {
+                Bundle b = data.getExtras();
+                NotificationItemSource.addItem(new com.jjmgab.notifier.database.Notification(
+                        b.getString("title"),
+                        b.getString("description"),
+                        LocalDateTime.of(
+                                b.getInt("year"),
+                                b.getInt("month"),
+                                b.getInt("day"),
+                                b.getInt("hour"),
+                                b.getInt("minute")
+                        )
+                ));
+            }
+        }
+    }
+
+    /**
+     * Called on tap on notification item list.
+     * @param item tapped notification item
+     */
+    @Override
     public void onListFragmentInteraction(com.jjmgab.notifier.database.Notification item) {
+        // for testing purposes; this should be added when creating new notification
         NotificationCreator.createNotificationChannel(this);
         Notification n = NotificationCreator.createNotification(this, item.title, item.details);
         NotificationCreator.scheduleNotification(this, n, 5000);

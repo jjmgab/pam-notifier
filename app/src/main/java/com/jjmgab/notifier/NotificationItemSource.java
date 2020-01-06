@@ -29,7 +29,7 @@ public class NotificationItemSource {
     private static final int COUNT = 25;
 
     public static void init(Context appContext, NotificationItemFragment fragment, boolean initWithCleanup) {
-        db = Room.databaseBuilder(appContext, AppDatabase.class, "database-name")
+        db = Room.databaseBuilder(appContext, AppDatabase.class, "notifier.db")
                 .allowMainThreadQueries()
                 .build();
 

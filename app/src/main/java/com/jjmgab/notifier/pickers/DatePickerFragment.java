@@ -11,8 +11,19 @@ import android.widget.Toast;
 import java.util.Calendar;
 
 public class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
+    private OnPickDateListener mCallback;
+
+    public interface OnPickDateListener {
+        void onDatePicked(int year, int month, int day);
+    }
+
+    public void setOnPickDateListener(OnPickDateListener callback) {
+        this.mCallback = callback;
+    }
+
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+
         // Use the current date as the default date in the picker
         final Calendar c = Calendar.getInstance();
         int year = c.get(Calendar.YEAR);
@@ -24,7 +35,6 @@ public class DatePickerFragment extends DialogFragment implements DatePickerDial
     }
 
     public void onDateSet(DatePicker view, int year, int month, int day) {
-        // Do something with the date chosen by the user
-        Toast.makeText(getContext(), String.format("%s-%s-%s", year, month, day), Toast.LENGTH_SHORT).show();
+        mCallback.onDatePicked(year, month, day);
     }
 }
