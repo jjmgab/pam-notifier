@@ -4,9 +4,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
 
 import android.app.Notification;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Toast;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 
 import java.time.LocalDateTime;
@@ -15,9 +19,11 @@ public class MainActivity
         extends AppCompatActivity
         implements NotificationItemFragment.OnListFragmentInteractionListener, SettingsFragment.OnFragmentInteractionListener {
 
-    private TabAdapter adapter;
-    private TabLayout tabLayout;
-    private ViewPager viewPager;
+    private TabAdapter mAdapter;
+    private TabLayout mTabLayout;
+    private ViewPager mViewPager;
+
+    private FloatingActionButton mFloatingActionButton;
 
     private NotificationItemFragment mNotificationItemFragment;
 
@@ -26,19 +32,29 @@ public class MainActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        viewPager = findViewById(R.id.viewPager);
-        tabLayout = findViewById(R.id.tabLayout);
+        mViewPager = findViewById(R.id.viewPager);
+        mTabLayout = findViewById(R.id.tabLayout);
 
         mNotificationItemFragment = new NotificationItemFragment();
 
-        adapter = new TabAdapter(getSupportFragmentManager());
-        adapter.addFragment(mNotificationItemFragment, "Notification list");
-        adapter.addFragment(new SettingsFragment(), "Settings");
+        mAdapter = new TabAdapter(getSupportFragmentManager());
+        mAdapter.addFragment(mNotificationItemFragment, "Notification list");
+        mAdapter.addFragment(new SettingsFragment(), "Settings");
 
-        viewPager.setAdapter(adapter);
-        tabLayout.setupWithViewPager(viewPager);
+        mViewPager.setAdapter(mAdapter);
+        mTabLayout.setupWithViewPager(mViewPager);
 
+        mFloatingActionButton = findViewById(R.id.floating_action_button);
+        mFloatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // open new notification activity here
+                Intent intent = new Intent(getApplicationContext(), AddNotification.class);
+                startActivity(intent);
+            }
+        });
 
+        // initialize database connection
         NotificationItemSource.init(this, mNotificationItemFragment, false);
 
         // for test purposes
