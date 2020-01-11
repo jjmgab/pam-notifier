@@ -13,13 +13,13 @@ import android.os.SystemClock;
 import androidx.core.app.NotificationCompat;
 
 public class NotificationCreator {
-    private static String CHANNEL_ID = "101102103104";
+    private static String CHANNEL_ID = "101102103105";
     private static String CHANNEL_NAME = "NotifierNotificationChannel";
     private static String CHANNEL_DESCRIPTION = "Notifier Notification Channel";
 
     public static void createNotificationChannel(Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            int importance = NotificationManager.IMPORTANCE_HIGH;
             NotificationChannel channel = new NotificationChannel(CHANNEL_ID, CHANNEL_NAME, importance);
             channel.setDescription(CHANNEL_DESCRIPTION);
 
@@ -39,10 +39,10 @@ public class NotificationCreator {
                 .build();
     }
 
-    public static void scheduleNotification(Context context, Notification notification, int delay) {
+    public static void scheduleNotification(Context context, Notification notification, int id, int delay) {
 
         Intent notificationIntent = new Intent(context, NotificationPublisher.class);
-        notificationIntent.putExtra(NotificationPublisher.NOTIFICATION_ID, 1);
+        notificationIntent.putExtra(NotificationPublisher.NOTIFICATION_ID, id);
         notificationIntent.putExtra(NotificationPublisher.NOTIFICATION, notification);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 

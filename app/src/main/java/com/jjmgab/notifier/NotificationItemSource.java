@@ -6,11 +6,14 @@ import androidx.room.Room;
 
 import com.jjmgab.notifier.database.AppDatabase;
 import com.jjmgab.notifier.database.Notification;
+import com.jjmgab.notifier.helpers.PreferenceHelper;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,16 +31,32 @@ public class NotificationItemSource {
 
     private static final int COUNT = 25;
 
-    public static void init(Context appContext, NotificationItemFragment fragment, boolean initWithCleanup) {
+    public static void init(Context appContext, NotificationItemFragment fragment) {
         db = Room.databaseBuilder(appContext, AppDatabase.class, "notifier.db")
                 .allowMainThreadQueries()
                 .build();
 
-        if (initWithCleanup) {
+        if (PreferenceHelper.getBooleanPref(appContext, PreferenceHelper.PREF_DEBUG_CLEAN_START)) {
             db.clearAllTables();
         }
 
+        // does not show notifications in the past
+        List<Notification> notificationList = new ArrayList<>();
         for (Notification n : db.notificationDao().getAll()) {
+            if (n.date.compareTo(LocalDateTime.now()) > 0) {
+                notificationList.add(n);
+            }
+        }
+
+        // sorts the list
+        notificationList.sort(new Comparator<Notification>() {
+            @Override
+            public int compare(Notification o1, Notification o2) {
+                return o1.date.compareTo(o2.date);
+            }
+        });
+
+        for (Notification n : notificationList) {
             ITEMS.add(n);
             ITEM_MAP.put(String.valueOf(n.id), n);
         }
@@ -49,6 +68,14 @@ public class NotificationItemSource {
         db.notificationDao().insertAll(item);
         ITEMS.add(item);
         ITEM_MAP.put(String.valueOf(item.id), item);
+
+        // sorts the list
+        ITEMS.sort(new Comparator<Notification>() {
+            @Override
+            public int compare(Notification o1, Notification o2) {
+                return o1.date.compareTo(o2.date);
+            }
+        });
 
         if (mFragment.getAdapter() != null) {
             mFragment.getAdapter().notifyDataSetChanged();

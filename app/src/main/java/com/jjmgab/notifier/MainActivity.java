@@ -12,12 +12,15 @@ import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
+import com.jjmgab.notifier.helpers.DeviceStateHelper;
+import com.jjmgab.notifier.helpers.PreferenceHelper;
+import com.jjmgab.notifier.helpers.TimeHelper;
 
 import java.time.LocalDateTime;
 
 public class MainActivity
         extends AppCompatActivity
-        implements NotificationItemFragment.OnListFragmentInteractionListener, SettingsFragment.OnFragmentInteractionListener {
+        implements NotificationItemFragment.OnListFragmentInteractionListener {
 
     private TabAdapter mAdapter;
     private TabLayout mTabLayout;
@@ -33,6 +36,8 @@ public class MainActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        DeviceStateHelper.init(this);
 
         mViewPager = findViewById(R.id.viewPager);
         mTabLayout = findViewById(R.id.tabLayout);
@@ -56,7 +61,7 @@ public class MainActivity
         });
 
         // initialize database connection
-        NotificationItemSource.init(this, mNotificationItemFragment, false);
+        NotificationItemSource.init(this, mNotificationItemFragment);
     }
 
     @Override
@@ -74,7 +79,9 @@ public class MainActivity
 
             if (hasTitle && hasTime && hasDate) {
                 Bundle b = data.getExtras();
-                NotificationItemSource.addItem(new com.jjmgab.notifier.database.Notification(
+
+                // create new notification
+                createNotification(new com.jjmgab.notifier.database.Notification(
                         b.getString("title"),
                         b.getString("description"),
                         LocalDateTime.of(
@@ -83,8 +90,7 @@ public class MainActivity
                                 b.getInt("day"),
                                 b.getInt("hour"),
                                 b.getInt("minute")
-                        )
-                ));
+                        )));
             }
         }
     }
@@ -95,14 +101,29 @@ public class MainActivity
      */
     @Override
     public void onListFragmentInteraction(com.jjmgab.notifier.database.Notification item) {
-        // for testing purposes; this should be added when creating new notification
-        NotificationCreator.createNotificationChannel(this);
-        Notification n = NotificationCreator.createNotification(this, item.title, item.details);
-        NotificationCreator.scheduleNotification(this, n, 5000);
     }
 
-    @Override
-    public void onFragmentInteraction(Uri uri) {
+    private void createNotification(com.jjmgab.notifier.database.Notification notification) {
+        // add notification to the list
+        NotificationItemSource.addItem(notification);
 
+        // create notification channel & notification itself
+        NotificationCreator.createNotificationChannel(this);
+        Notification n = NotificationCreator.createNotification(this, notification.title, notification.details);
+
+        // setting time
+        int time;
+        if (PreferenceHelper.getBooleanPref(this, PreferenceHelper.PREF_DEBUG_FIXED_TIME)) {
+            time = 3000;
+        } else {
+            time = TimeHelper.getSecondsToDateFromNow(notification.date);
+        }
+
+        if (PreferenceHelper.getBooleanPref(this, PreferenceHelper.PREF_DEBUG_TOASTS)) {
+            Toast.makeText(this, String.valueOf(time), Toast.LENGTH_SHORT).show();
+        }
+
+        // schedule notification to appear at set time
+        NotificationCreator.scheduleNotification(this, n, notification.id, time);
     }
 }

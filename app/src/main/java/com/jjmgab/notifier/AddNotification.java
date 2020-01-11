@@ -12,7 +12,6 @@ import android.widget.Toast;
 import com.jjmgab.notifier.pickers.DatePickerFragment;
 import com.jjmgab.notifier.pickers.TimePickerFragment;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Locale;
 

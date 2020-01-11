@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory
+        app:key="notifications_conditions"
+        app:title="Notification conditions">
+
+        <SwitchPreferenceCompat
+            app:key="bluetooth"
+            app:title="Check if Bluetooth is enabled"/>
+
+        <SwitchPreferenceCompat
+            app:key="wifi_enabled"
+            app:title="Check if Wifi is enabled"/>
+
+        <SwitchPreferenceCompat
+            app:key="wifi_connected"
+            app:title="Check if Wifi is connected"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        app:key="debug_options"
+        app:title="Options for the developer">
+
+        <SwitchPreferenceCompat
+            app:key="debug_toasts"
+            app:title="Show toasts"/>
+
+        <SwitchPreferenceCompat
+            app:key="debug_fixed_time"
+            app:title="Fixed publishing time"
+            app:summary="All notifications have fixed publishing time of 3s."/>
+
+        <SwitchPreferenceCompat
+            app:key="debug_clean_start"
+            app:title="Clean start"
+            app:summary="Application starts with empty database."/>
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

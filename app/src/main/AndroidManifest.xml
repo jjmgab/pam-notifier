@@ -21,4 +21,6 @@
         <receiver android:name=".NotificationPublisher" />
     </application>
 
+    <uses-permission android:name="android.permission.BLUETOOTH" android:required="false" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 </manifest>
