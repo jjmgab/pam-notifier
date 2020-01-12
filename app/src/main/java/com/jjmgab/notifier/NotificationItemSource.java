@@ -1,6 +1,7 @@
 package com.jjmgab.notifier;
 
 import android.content.Context;
+import android.widget.Toast;
 
 import androidx.room.Room;
 
@@ -65,7 +66,9 @@ public class NotificationItemSource {
     }
 
     public static void addItem(Notification item) {
-        db.notificationDao().insertAll(item);
+        List<Long> ids = db.notificationDao().insertAll(item);
+        item.id = ids.get(0).intValue();
+
         ITEMS.add(item);
         ITEM_MAP.put(String.valueOf(item.id), item);
 
@@ -80,6 +83,41 @@ public class NotificationItemSource {
         if (mFragment.getAdapter() != null) {
             mFragment.getAdapter().notifyDataSetChanged();
         }
+    }
+
+    public static void removeItemById(int id) {
+        List<Notification> result = db.notificationDao().loadAllByIds(new int[]{id});
+        if (!result.isEmpty()) {
+            // removing from db
+            Notification toDeleteFromDb = result.get(0);
+            db.notificationDao().delete(toDeleteFromDb);
+
+            // removing from list
+            Notification toDeleteFromList = getById(id);
+            ITEMS.remove(toDeleteFromList);
+            ITEM_MAP.remove(id);
+
+            // sorts the list
+            ITEMS.sort(new Comparator<Notification>() {
+                @Override
+                public int compare(Notification o1, Notification o2) {
+                    return o1.date.compareTo(o2.date);
+                }
+            });
+
+            if (mFragment.getAdapter() != null) {
+                mFragment.getAdapter().notifyDataSetChanged();
+            }
+        }
+    }
+
+    private static Notification getById(int id) {
+        for (Notification n : ITEMS) {
+            if (n.id == id) {
+                return n;
+            }
+        }
+        return null;
     }
 
     // data seeding

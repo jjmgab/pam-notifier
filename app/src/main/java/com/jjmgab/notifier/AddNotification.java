@@ -9,6 +9,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.jjmgab.notifier.constants.IntentExtraConstants;
 import com.jjmgab.notifier.pickers.DatePickerFragment;
 import com.jjmgab.notifier.pickers.TimePickerFragment;
 
@@ -27,6 +28,15 @@ public class AddNotification extends AppCompatActivity implements TimePickerFrag
     private int mMonth;
     private int mDay;
 
+    private static final String TAG_DATE_PICKER= "datePicker";
+    private static final String TAG_TIME_PICKER= "timePicker";
+
+    private static final String TEMPLATE_STRING_DATE = "Date selected: %04d-%02d-%02d";
+    private static final String TEMPLATE_STRING_TIME = "Time selected: %02d:%02d";
+
+    private static final String ERROR_DATA_NOT_CORRECT = "Data not filled correctly";
+    private static final String ERROR_DATE_TIME_IN_PAST = "Date and time cannot be set to past";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,13 +46,13 @@ public class AddNotification extends AppCompatActivity implements TimePickerFrag
     public void showDatePickerDialog(View v) {
         DatePickerFragment newFragment = new DatePickerFragment();
         newFragment.setOnPickDateListener(this);
-        newFragment.show(getSupportFragmentManager(), "datePicker");
+        newFragment.show(getSupportFragmentManager(), TAG_DATE_PICKER);
     }
 
     public void showTimePickerDialog(View v) {
         TimePickerFragment newFragment = new TimePickerFragment();
         newFragment.setOnPickTimeListener(this);
-        newFragment.show(getSupportFragmentManager(), "timePicker");
+        newFragment.show(getSupportFragmentManager(), TAG_TIME_PICKER);
     }
 
     @Override
@@ -53,7 +63,7 @@ public class AddNotification extends AppCompatActivity implements TimePickerFrag
         mMinute = minute;
 
         TextView textView = findViewById(R.id.textViewTime);
-        textView.setText(String.format(Locale.getDefault(), "Time selected: %02d:%02d", mHour, mMinute));
+        textView.setText(String.format(Locale.getDefault(), TEMPLATE_STRING_TIME, mHour, mMinute));
     }
 
     @Override
@@ -65,7 +75,7 @@ public class AddNotification extends AppCompatActivity implements TimePickerFrag
         mDay = day;
 
         TextView textView = findViewById(R.id.textViewDate);
-        textView.setText(String.format(Locale.getDefault(), "Date selected: %04d-%02d-%02d", mYear, mMonth, mDay));
+        textView.setText(String.format(Locale.getDefault(), TEMPLATE_STRING_DATE, mYear, mMonth, mDay));
     }
 
     public void onCancelButtonClick(View view) {
@@ -78,11 +88,11 @@ public class AddNotification extends AppCompatActivity implements TimePickerFrag
         EditText inputDescription = findViewById(R.id.editTextDescription);
 
         String title = inputTitle.getText().toString();
-        String description = inputDescription.getText().toString();
+        String details = inputDescription.getText().toString();
 
         // validate for empty fields
-        if("".equals(title) || "".equals(description) || !mIsDateSet || !mIsTimeSet) {
-            Toast.makeText(this, "Data not filled correctly", Toast.LENGTH_SHORT).show();
+        if("".equals(title) || "".equals(details) || !mIsDateSet || !mIsTimeSet) {
+            Toast.makeText(this, ERROR_DATA_NOT_CORRECT, Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -95,18 +105,18 @@ public class AddNotification extends AppCompatActivity implements TimePickerFrag
         boolean isTimeEarlierOrNow = now.toLocalTime().compareTo(selected.toLocalTime()) >= 0;
 
         if (isDateInThePast || (isDateNow && isTimeEarlierOrNow)) {
-            Toast.makeText(this, "Date and time cannot be set to past", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, ERROR_DATE_TIME_IN_PAST, Toast.LENGTH_SHORT).show();
             return;
         }
 
         Intent data = new Intent();
-        data.putExtra("year", mYear);
-        data.putExtra("month", mMonth);
-        data.putExtra("day", mDay);
-        data.putExtra("hour", mHour);
-        data.putExtra("minute", mMinute);
-        data.putExtra("title", title);
-        data.putExtra("description", description);
+        data.putExtra(IntentExtraConstants.YEAR, mYear);
+        data.putExtra(IntentExtraConstants.MONTH, mMonth);
+        data.putExtra(IntentExtraConstants.DAY, mDay);
+        data.putExtra(IntentExtraConstants.HOUR, mHour);
+        data.putExtra(IntentExtraConstants.MINUTE, mMinute);
+        data.putExtra(IntentExtraConstants.TITLE, title);
+        data.putExtra(IntentExtraConstants.DETAILS, details);
 
         setResult(RESULT_OK, data);
         super.finish();

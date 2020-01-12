@@ -52,7 +52,7 @@
         android:layout_marginTop="16dp"
         android:onClick="showTimePickerDialog"
         android:text="Pick time"
-        app:layout_constraintBottom_toTopOf="@+id/buttonCancel"
+        app:layout_constraintBottom_toTopOf="@+id/buttonDelete"
         app:layout_constraintEnd_toStartOf="@+id/textViewTime"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
@@ -109,7 +109,7 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
-        android:id="@+id/buttonCancel"
+        android:id="@+id/buttonDelete"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
@@ -132,10 +132,10 @@
         android:layout_marginEnd="32dp"
         android:text="OK"
         android:onClick="onAcceptButtonClick"
-        app:layout_constraintBaseline_toBaselineOf="@+id/buttonCancel"
+        app:layout_constraintBaseline_toBaselineOf="@+id/buttonDelete"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/buttonCancel" />
+        app:layout_constraintStart_toEndOf="@+id/buttonDelete" />
 
     <TextView
         android:id="@+id/textViewActivityTitle"

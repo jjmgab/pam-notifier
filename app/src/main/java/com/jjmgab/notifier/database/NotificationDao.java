@@ -5,7 +5,6 @@ import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Dao
@@ -31,8 +30,8 @@ public interface NotificationDao {
     List<Notification> findBeforeDate(LocalDate date, LocalTime time);
 */
     @Insert
-    void insertAll(Notification... notifications);
+    List<Long> insertAll(Notification... notifications);
 
     @Delete
-    void delete(Notification notifications);
+    void delete(Notification... notifications);
 }
