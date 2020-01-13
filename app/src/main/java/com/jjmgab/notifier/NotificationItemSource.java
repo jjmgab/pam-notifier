@@ -41,6 +41,9 @@ public class NotificationItemSource {
             db.clearAllTables();
         }
 
+        ITEMS.clear();
+        ITEM_MAP.clear();
+
         // does not show notifications in the past
         List<Notification> notificationList = new ArrayList<>();
         for (Notification n : db.notificationDao().getAll()) {
