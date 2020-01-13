@@ -8,15 +8,23 @@
 
         <SwitchPreferenceCompat
             app:key="bluetooth"
-            app:title="Check if Bluetooth is enabled"/>
+            app:title="Bluetooth enabled"
+            app:summary="Checks if Bluetooth is enabled"/>
 
         <SwitchPreferenceCompat
             app:key="wifi_enabled"
-            app:title="Check if Wifi is enabled"/>
+            app:title="Wifi enabled"
+            app:summary="Checks if Wifi is enabled"/>
 
         <SwitchPreferenceCompat
             app:key="wifi_connected"
-            app:title="Check if Wifi is connected"/>
+            app:title="Wifi connected"
+            app:summary="Checks if Wifi is connected"/>
+
+        <SwitchPreferenceCompat
+            app:key="battery_charging"
+            app:title="Battery charging"
+            app:summary="Checks if the battery is plugged in and charging"/>
 
     </PreferenceCategory>
 

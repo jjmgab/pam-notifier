@@ -18,11 +18,14 @@ public class NotificationPublisher extends BroadcastReceiver {
 
     public static final String WIFI = "\nWIFI ";
     public static final String BLUETOOTH = "\nBLUETOOTH ";
+    public static final String BATTERY = "\nBATTERY ";
 
     public static final String ENABLED = "ENABLED";
     public static final String DISABLED = "DISABLED";
     public static final String CONNECTED = "CONNECTED";
     public static final String DISCONNECTED = "DISCONNECTED";
+    public static final String CHARGING = "CHARGING";
+    public static final String NOT_CHARGING = "NOT CHARGING";
 
     public void onReceive(Context context, Intent intent) {
 
@@ -66,6 +69,17 @@ public class NotificationPublisher extends BroadcastReceiver {
             }
             else {
                 builder.append(DISCONNECTED);
+                areConditionsFulfilled = areConditionsFulfilled && false;
+            }
+        }
+        if (PreferenceHelper.getBooleanPref(context, PreferenceHelper.PREF_BATTERY_CHARGING)) {
+            builder.append(BATTERY);
+            if (DeviceStateHelper.isBatteryCharging()) {
+                builder.append(CHARGING);
+                areConditionsFulfilled = areConditionsFulfilled && true;
+            }
+            else {
+                builder.append(NOT_CHARGING);
                 areConditionsFulfilled = areConditionsFulfilled && false;
             }
         }

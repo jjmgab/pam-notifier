@@ -9,6 +9,7 @@ public final class PreferenceHelper {
     public static final String PREF_BLUETOOTH_ENABLED = "bluetooth";
     public static final String PREF_WIFI_ENABLED = "wifi_enabled";
     public static final String PREF_WIFI_CONNECTED = "wifi_connected";
+    public static final String PREF_BATTERY_CHARGING = "battery_charging";
 
     public static final String PREF_DEBUG_TOASTS = "debug_toasts";
     public static final String PREF_DEBUG_FIXED_TIME = "debug_fixed_time";

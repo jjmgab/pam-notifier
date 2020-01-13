@@ -2,8 +2,11 @@ package com.jjmgab.notifier.helpers;
 
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.os.BatteryManager;
 
 import static android.content.Context.WIFI_SERVICE;
 
@@ -30,6 +33,14 @@ public final class DeviceStateHelper {
             return wifiInfo != null && wifiInfo.getNetworkId() != -1;
         }
         return false;
+    }
+
+    public static boolean isBatteryCharging() {
+        IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
+        Intent batteryStatus = mAppContext.registerReceiver(null, ifilter);
+        int status = batteryStatus.getIntExtra(BatteryManager.EXTRA_STATUS, -1);
+        return status == BatteryManager.BATTERY_STATUS_CHARGING ||
+                status == BatteryManager.BATTERY_STATUS_FULL;
     }
 
     private static WifiManager getWifiManager() {
